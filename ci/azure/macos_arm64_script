@@ -14,9 +14,9 @@ HOST_CACHE_BASENAME="zig+llvm+lld+clang-$HOST_TARGET-0.9.1"
 HOST_PREFIX="$HOME/$HOST_CACHE_BASENAME"
 
 ARCH="aarch64"
-TARGET="$ARCH-macos-gnu"
+TARGET="$ARCH-macos"
 MCPU="apple_a14"
-CACHE_BASENAME="zig+llvm+lld+clang-$TARGET-0.9.1"
+CACHE_BASENAME="zig+llvm+lld+clang-$TARGET-gnu-0.9.1"
 PREFIX="$HOME/$CACHE_BASENAME"
 
 JOBS="-j2"
@@ -66,8 +66,8 @@ cd $ZIGDIR
 
 ZIG="$ZIGDIR/build.host/release/bin/zig"
 
-export CC="$ZIG cc -target $TARGET -mcpu=$MCPU"
-export CXX="$ZIG c++ -target $TARGET -mcpu=$MCPU"
+export CC="$ZIG cc -target $TARGET-none -mcpu=$MCPU"
+export CXX="$ZIG c++ -target $TARGET-none -mcpu=$MCPU"
 
 mkdir build
 cd build
@@ -75,7 +75,7 @@ cmake .. \
   -DCMAKE_INSTALL_PREFIX="$(pwd)/release" \
   -DCMAKE_PREFIX_PATH="$PREFIX" \
   -DCMAKE_BUILD_TYPE=Release \
-  -DZIG_TARGET_TRIPLE="$TARGET" \
+  -DZIG_TARGET_TRIPLE="$TARGET-none" \
   -DZIG_TARGET_MCPU="$MCPU" \
   -DZIG_EXECUTABLE="$ZIG" \
   -DZIG_STATIC=ON
