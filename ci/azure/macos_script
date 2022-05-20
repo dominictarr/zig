@@ -7,9 +7,9 @@ brew update && brew install ncurses s3cmd
 
 ZIGDIR="$(pwd)"
 ARCH="x86_64"
-TARGET="$ARCH-macos-gnu"
+TARGET="$ARCH-macos"
 MCPU="baseline"
-CACHE_BASENAME="zig+llvm+lld+clang-$TARGET-0.9.1"
+CACHE_BASENAME="zig+llvm+lld+clang-$TARGET-gnu-0.9.1"
 PREFIX="$HOME/$CACHE_BASENAME"
 JOBS="-j2"
 
@@ -20,8 +20,8 @@ wget -nv "https://ziglang.org/deps/$CACHE_BASENAME.tar.xz"
 tar xf "$CACHE_BASENAME.tar.xz"
 
 ZIG="$PREFIX/bin/zig"
-export CC="$ZIG cc -target $TARGET -mcpu=$MCPU"
-export CXX="$ZIG c++ -target $TARGET -mcpu=$MCPU"
+export CC="$ZIG cc -target $TARGET-gnu -mcpu=$MCPU"
+export CXX="$ZIG c++ -target $TARGET-gnu -mcpu=$MCPU"
 
 cd $ZIGDIR
 
@@ -37,7 +37,7 @@ cmake .. \
   -DCMAKE_INSTALL_PREFIX="$(pwd)/release" \
   -DCMAKE_PREFIX_PATH="$PREFIX" \
   -DCMAKE_BUILD_TYPE=Release \
-  -DZIG_TARGET_TRIPLE="$TARGET" \
+  -DZIG_TARGET_TRIPLE="$TARGET-gnu" \
   -DZIG_TARGET_MCPU="$MCPU" \
   -DZIG_STATIC=ON \
   -DZIG_OMIT_STAGE2=ON
@@ -52,7 +52,7 @@ make $JOBS install
 # Here we rebuild zig but this time using the Zig binary we just now produced to
 # build zig1.o rather than relying on the one built with stage0. See
 # https://github.com/ziglang/zig/issues/6830 for more details.
-cmake .. -DZIG_EXECUTABLE="$(pwd)/release/bin/zig"
+cmake .. -DZIG_EXECUTABLE="$(pwd)/release/bin/zig" -DZIG_TARGET_TRIPLE="$TARGET-none"
 make $JOBS install
 
 # Build stage2 standalone so that we can test stage2 against stage2 compiler-rt.
